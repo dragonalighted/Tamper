@@ -27,3 +27,14 @@ function addGlobalStyle(css) {
 	head.appendChild(style);
 }
  
+ 
+function cast(rawObj, constructor)
+{
+	var obj = new constructor(); 
+    for(var prop in rawObj){
+    	if(prop in obj) {
+        	obj[prop] = rawObj[prop]; 
+        }
+    }
+    return obj; 
+} 
