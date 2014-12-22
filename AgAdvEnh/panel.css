@@ -1,0 +1,63 @@
+
+
+#custom_PolicyHistoryBox {
+	position:fixed;
+	top:200px;
+	right:0px;
+	padding:5px;
+	min-height:100px;
+	background:lightgrey;
+	display:flex;
+}
+
+#custom_PolicyHistoryTab {
+	width:20px;
+	border-style:solid;
+	border-width=2px;
+	border-color:rgb(101, 134, 153);
+	background-color:rgb(78, 164, 226);
+	margin-right:10px;
+}
+
+#custom_PolicyHistoryMeat{
+	display:block;
+	width:450px;
+}
+
+#custom_PolicyHistoryBox h3 {
+	display:inline
+}
+
+#custom_newPolicyItem {
+	display:inline-flex;
+}
+
+#custom_txtAddNewPolicy {
+	padding-right:10px;
+	width:80px;
+} 
+
+#custom_taAddNewPolicy {
+	width:220px;
+	max-width:220px;
+} 
+
+#custom_btnAddNewPolicy {
+	margin-left:10px;
+}
+
+.msg_box {
+	display:none;
+	text-align:center;
+	background-color:green;
+	color:white;
+	font-weight:bolder;
+	padding:10px;
+	margin-top:10px;
+} 
+
+.err {
+	background-color:red; 
+	color:white; 
+}
+
