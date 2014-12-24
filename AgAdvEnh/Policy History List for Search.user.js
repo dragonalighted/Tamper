@@ -1,33 +1,106 @@
 // ==UserScript==
-// @name         Policy History List for Search
-// @namespace    http://your.homepage/
-// @version      0.1
-// @description  enter something useful
-// @author       You
+// @name         AgAdv Policy History List 
+// @namespace    http://www.makemea.ninja 
+// @version      0.3
+// @author       Christopher Reeber 
 // @match        http*://localhost/AgAdvantage*
 // @match        http*://localhost/AgriLogic.Web*
 // @grant        unsafeWindow
+// @grant        GM_addStyle
+// @grant    	 GM_getResourceText
 // @require      http://code.jquery.com/jquery-latest.js
-// @require      https://gist.github.com/raw/2625891/waitForKeyElements.js
+// @resource  	pnlhtml		https://raw.githubusercontent.com/dragonalighted/Tamper/master/AgAdvEnh/panel.html
+// @resource  	itmhtml  	https://raw.githubusercontent.com/dragonalighted/Tamper/master/AgAdvEnh/history_item.html
+// @resource  	pnlcss		https://raw.githubusercontent.com/dragonalighted/Tamper/master/AgAdvEnh/panel.css
 // ==/UserScript==
 
-var cookieName = 'pHistorySearchList';
+
+// Get our resources. 
+var pnlcss = GM_getResourceText("pnlcss");
+var pnlhtml = GM_getResourceText("pnlhtml");
+var itmhtml = GM_getResourceText("itmhtml");
+    
+GM_addStyle(pnlcss);
+
+var policyCookieName = 'pHistorySearchList';
 var drawerCookieName = 'pHistorySearchDrawer';
 
-function getPolicyHistoryBox()
+function doSomething()
 {
-	return $('#custom_PolicyHistoryBox'); 
-}
-function getTab()
-{
-	return $('#custom_PolicyHistoryTab'); 
+    writeErr(''); 
+    var $updatePanel = $('body'); 
+    var panel = getControl('main'); 
+    if( panel.length !== 0 ) 
+        return; 
+
+    $updatePanel.append(pnlhtml); 
+	
+
+
+    
+    var tab = getControl('tab'); 
+    tab.click(tabClicked); 
+    tab.hover(function(){ 
+        getControl('tab').css("border-color", "black"); 
+    }, function(){
+        getControl('tab').css("border-color", "rgb(101, 134, 153)"); 
+    });
+    
+    $('#btnTestPolicySearchList').click( function() {
+    	writeErr('TEST! TEST! TEST'); 
+        writeMsg('TEST! TEST! TEST'); 
+    });
+    
+    var list = $('#custom_PolicyHistoryList');     
+	var btnSav = $('#btnSavePolicySearchList'); 
+        
+    loadPolicyCookie();   
+
+    // We do not want to do any saving unless cookie loads correctly
+    btnSav.click(saveSearchList); 
+    var btnAddNew = $('#custom_btnAddNewPolicy'); 
+    btnAddNew.click(function(){
+    	var ta = $('#custom_taAddNewPolicy');
+        var pn = $('#custom_txtAddNewPolicy');
+        
+        if( pn.val().trim() !== '' ) {
+            addSearchItem( new PolicyHistoryItem( pn.val(), ta.val())); 
+            ta.val(''); 
+            pn.val(''); 
+            saveSearchList(); 
+        } else {
+        	writeErr("New Policy Number cannot be empty.");
+        }       
+    });
+    
+    
+	var tabState = loadCookie(drawerCookieName); 
+    if(tabState === '' || tabState === 'opened'){
+    	getControl('meat').css('display', 'block'); 
+    } else {
+       	getControl('meat').css('display', 'none'); 
+    }    
+} 
+
+function getControl(name) {
+	switch(name){
+        case 'main' :
+            return $('#custom_PolicyHistoryBox'); 
+        case 'tab' : 
+            return $('#custom_PolicyHistoryTab'); 
+        case 'meat' : 
+            return $('#custom_PolicyHistoryMeat');
+        case 'list' : 
+            return $('#custom_PolicyHistoryList');
+        case 'msg' : 
+            return $('#msg_custom_PolicyHistoryBox');
+        case 'err' : 
+            return $('#err_custom_PolicyHistoryBox');
+    }
+    return null;     
 }
 
-function getMeat()
-{
-	return $('#custom_PolicyHistoryMeat'); 
-}
-             
+
 function PolicyHistoryItem( policy, note, sticky, date)
 { 
     if(typeof(policy)==='undefined') policy = 'Dummy';
@@ -45,16 +118,14 @@ function PolicyHistoryItem( policy, note, sticky, date)
 
 function writeErr(msg)
 {
-	var id = 'err_custom_PolicyHistoryBox';
-    var errPanel = $('#'+id); 
+	var errPanel = getControl('err');  
     errPanel.text(msg); 
     errPanel.fadeIn(400).delay(10000).fadeOut(400); 
 }
 
 function writeMsg(msg)
 {
-	var id= '#msg_custom_PolicyHistoryBox';
-    var errPanel = $(id); 
+    var errPanel = getControl('msg'); 
     errPanel.text(msg);
     errPanel.fadeIn(400).delay(3000).fadeOut(400); 
 }
@@ -81,121 +152,56 @@ function sortHistory(a, b)
     }
 }
 
-function cast(rawObj, constructor)
-{
-	var obj = new constructor(); 
-    for(var prop in rawObj){
-    	if(prop in obj) {
-        	obj[prop] = rawObj[prop]; 
-        }
-    }
-    return obj; 
-}
-
-function savePolicyCookie( policyJsonString)
-{
-    saveCookie(cookieName, policyJsonString); 
-//    var d = new Date(); 
-//    d.setFullYear(d.getFullYear() + 1 , d.getMonth(), d.getDay()); 
-//	  var cookieString = cookieName +"=" + policyJsonString + "; expires="+ d.toGMTString() +"; path=/";    
-//    document.cookie= cookieString; 
-}
-
-function saveCookie(cookie_name, cookine_string)
-{
-    var d = new Date(); 
-    d.setFullYear(d.getFullYear() + 1 , d.getMonth(), d.getDay()); 
-	var cookieString = cookie_name +"=" + cookine_string + "; expires="+ d.toGMTString() +"; path=/";    
-    document.cookie= cookieString; 
-}
-
 function clearPolicySearchList(){
     var policies = new Array(); 
     var jObj = JSON.stringify(policies); 
-    savePolicyCookie(jObj);  
-}
-
-function addNewPolicyItem()
-{
-	var list = $('#custom_newPolicyBox');   
-    var itemText = '' +
-        '<hr />'+
-        '<div id="custom_newPolicyItem" style="display:inline-flex;" >\n ' + 
-        '	<div><input type="text" placeholder="New Policy #" id="custom_txtAddNewPolicy"   style="padding-right:10px; width:80px;" /></div> \n' + 
-        '	<div style="padding:0px 10px;"><textarea placeholder="Policy Notes" id="custom_taAddNewPolicy" rows="1" style="width:220px;max-width:220px;" ></textarea></div> \n' +
-        '	<span><input type="button" value="Add" id="custom_btnAddNewPolicy" style="margin-left:10px;"/></span> \n' +
-        '</div> \n'+
-        '<hr />'+
-        ''; 
-     list.append(itemText); 
-    var btn = $('#custom_btnAddNewPolicy'); 
-    btn.click(function(){
-    	var ta = $('#custom_taAddNewPolicy');
-        var pn = $('#custom_txtAddNewPolicy');
-        
-        if( pn.val().trim() !== '' ) {
-            addSearchItem( new PolicyHistoryItem( pn.val(), ta.val())); 
-            ta.val(''); 
-            pn.val(''); 
-            saveSearchList(); 
-        } else {
-        	writeErr("New Policy Number cannot be empty.");
-        }       
-    });
-    
+    saveCookie(policyCookieName, jObj);  
 }
 
 function addSearchItem(p)
 {
-    var list = $('#custom_PolicyHistoryList');     
-    var id= 'ph'+p.policyNum+''; 
-    var btnDelId = 'btnDel' + id; 
-    var txtId = 'txt' + id; 
-    var liId = 'li_ph' + id; 
-    var chkId = 'cb' + id; 
-    var hdnId = 'hdn' + id; 
-
-    var itemText = '' +
-        '<li id="'+liId+'" style="display:inline-flex;" > \n' +
-        '	<div style="width:45px;"><a id="'+id+'">' + p.policyNum + '</a></div>\n' +
-        '	<div style="padding:0px 10px;"><textarea rows="1" id="'+txtId+'" style="width:275px;max-width:275px;">'+p.note+'</textarea></div> \n' +
-        '	<div "> \n' + 
-     	'		<input id="'+chkId+'" type="checkbox" ' + (Boolean(p.sticky) === true ? 'checked="true"' : ' ') +'"/> \n' +
-     	'		<input id="'+hdnId+'" type="hidden" value="'+p.lastVisit+'"/> \n' +
-     	'  	<input id="'+btnDelId+'" type="button" value="Del" /> \n' + 
-     	'	</div> \n' + 
-     	'</li> \n';     
+    var list = getControl('list');     
+    
+    var itemText = itmhtml.replace('PHL_POLICY_NUM', p.policyNum)
+    	.replace('PHL_POLICY_NOTE', p.note)
+    	.replace('PHL_POLICY_TOUCH', p.lastVisit)
+    	.replace('PHL_POLICY_STICK', (Boolean(p.sticky) === true ? 'checked="true"' : ' ') ); 
+    
     list.append( itemText ); 
     
-    var btnDelPolicy = $('#' + btnDelId);
-    
+	var btnDelId = "#del_ph_" + p.policyNum; 
+    var aId = "#a_ph_" + p.policyNum; 
+    var cbId = "#cb_ph_" + p.policyNum; 
+    var txtId = "#tb_ph_" + p.policyNum;
+    var btnDelPolicy = $( btnDelId);
+
     btnDelPolicy.click(
         function(){            
-            var itemId = 'li_ph' +  this.id.substring(6); 
-            var li = $('#' + itemId); 
+            var itemId = '#li_ph_' +  this.id.substring(6); 
+            var li = $(itemId); 
             li.remove(); 
             saveSearchList();
         });
     
     
-    $('#'+id).click(
+    $(aId).click(
         function() { 
             var searchBox = $('#Main_txtSearch'); 
             var searchBtn = $('#Main_cmdSearch');             
             var pNum = $(this); 
-            searchBox.val(pNum.text());
+            var policyNum = pNum.text(); 
+            searchBox.val(policyNum);
             searchBtn.trigger('click'); 
         }); 
 
 
-	$('#'+chkId).change(saveSearchList);
-    $('#' + txtId).blur(saveSearchList); 
+	$(cbId).change(saveSearchList);
+    $(txtId).blur(saveSearchList); 
 }
-
 
 function saveSearchList()
 {
- 	var listItems = $("[id*='li_ph']"); 
+ 	var listItems = $("[id*='li_ph_']"); 
     var l = listItems.length; 
 	 
     var policies = new Array(); 
@@ -203,45 +209,23 @@ function saveSearchList()
     for( i = 0; i < l; i++)
     {
         var item = listItems[i]; 
-        var pNumId = item.id.replace('li_ph', ''); 
-        var pNoteId = item.id.replace('li_ph', 'txt');
-        var pStickyId = item.id.replace('li_ph', 'cb'); 
-        var pDateId = item.id.replace('li_ph', 'hdn'); 
+        var pNumId = item.id.replace('li_ph_', 'a_ph_'); 
+        var pNoteId = item.id.replace('li_ph_', 'tb_ph_');
+        var pStickyId = item.id.replace('li_ph_', 'cb_ph_'); 
+        var pDateId = item.id.replace('li_ph_', 'hdn_ph_'); 
         var sticky = Boolean($('#'+pStickyId).is(':checked')); 
         var p = new PolicyHistoryItem( $('#'+pNumId).text(),'' + $('#' + pNoteId).val(), sticky, new Date($('#'+pDateId).val())); 
     	policies[i] = p;         
     }
     var jString = JSON.stringify(policies); 
 
-    savePolicyCookie( jString);
+    saveCookie( policyCookieName, jString);
     writeMsg( l + ' Items Saved!');
 }
 
-//function addSearchItemClicked()
-//{
-//    var policyNum = "";
-//    do {
-//		policyNum = prompt('Please enter policy number.'); 
-//    }
-//    while(policyNum <= 5 );        
-//    var p = new PolicyHistoryItem(policyNum, '', false, new Date()); 
-// 	addSearchItem(p);
-//    saveSearchList();
-//}
-
-function loadCookie(cookie_name)
-{
-    match = document.cookie.match(new RegExp(cookie_name + '=([^;]+)')); //+ '=(.*)'))
-	//drawerCookieName
-    if(match)  {
-        return match[1] ;
-    } else { 
-        return '';
-    } 
-}
 function loadPolicyCookie()
 {	
-    var policyString = loadCookie(cookieName);  
+    var policyString = loadCookie(policyCookieName);  
 
  	var policies;
  	try { 
@@ -257,105 +241,28 @@ function loadPolicyCookie()
     }
  	policies.sort(sortHistory);
  	for( i = 0; i < len; i++) {
-        //alert(JSON.stringify(policies[i])); 
  		addSearchItem(policies[i]);
     } 
 }
 
-//window.addEventListener('load', function() {
 
 function tabClicked()
 {
-    var meat = getMeat(); 
+    var meat = getControl('meat'); 
     var dispStyle = meat.css('display');
     var cookieData = '';     
     if(dispStyle === 'none'){
-//    	cookieData = 'closed'; 
 		cookieData = 'opened' ;
     } else {
-//        cookieData = 'opened' ;
     	cookieData = 'closed'; 
     }
 
     meat.slideToggle(1000);     
     
-    saveCookie(drawerCookieName, cookieData); 
-    
+    saveCookie(drawerCookieName, cookieData);    
 }
-function doSomething()
-{
-    writeErr(''); 
-    var $updatePanel = $('body'); 
-    var pPanelId = 'custom_PolicyHistoryBox';
-    if ($('#'+pPanelId).length !== 0 )
-        return; 
-    var policyPanel = '' +
-        '<div id="'+pPanelId+'" style="position:fixed;top:200px;right:0px;padding:5px;min-height:100px; background:lightgrey;display:flex;"> \n' +
-        '    <div id="custom_PolicyHistoryTab" style="width:20px;border-style:solid;border-width=2px; border-color:rgb(101, 134, 153); background-color:rgb(78, 164, 226); margin-right:10px;"></div> \n' + 
-        '    <div id="custom_PolicyHistoryMeat" style="display:block;width:450px;">\n' +
-        '    	<h3 style="display:inline;">Policy History</h3>\n' + 
-        ' 		<a href="https://localhost/AgAdvantage/Policies.aspx" style="float:right;margin-right:2em;">Policy Search</a><br/>\n' +
-        '' +
-        '    	<ol id="custom_PolicyHistoryList"> \n' +
-   	 	'    	</ol> \n' + 
-        '  		<div id="custom_newPolicyBox" ></div> \n' +		
-    	//'	   	<input type="button" value="Add" id="btnAddPolicySearchList" /> \n' +
-    	'	   	<input type="button" value="Save" id="btnSavePolicySearchList" /> \n' +
-    	'	   	<input type="button" value="Test" id="btnTestPolicySearchList" /> \n' +
-    	'	   	 \n' +
-        '      	\n' + 
-        '   	<div id="msg_custom_PolicyHistoryBox" style="display:none;text-align:center;background-color:green;color:white;font-weight:bolder; padding:10px;margin-top:10px;"> </div> \n' +
-        '		<div id="err_custom_PolicyHistoryBox" style="display:none;text-align:center;background-color:red;color:white;font-weight:bolder; padding:10px;margin-top:10px;"></div> \n' +
-        '	</div>\n'+
-        '</div> \n' +
-        ''	; 
-    $updatePanel.append(policyPanel); 
-	
-    addNewPolicyItem(); 
-    
-    var tab = getTab(); 
-    tab.click(tabClicked); 
-    tab.hover(function(){ 
-        getTab().css("border-color", "black"); 
-    }, function(){
-        getTab().css("border-color", "rgb(101, 134, 153)"); 
-    });
-    
-    $('#btnTestPolicySearchList').click( function() {
-    	writeErr('TEST! TEST! TEST'); 
-        writeMsg('TEST! TEST! TEST'); 
-    });
-    
-    var list = $('#custom_PolicyHistoryList');     
-	var btnClear = $('#btnClearPolicySearchList'); 
-    var btnAdd = $('#btnAddPolicySearchList'); 
-    var btnSav = $('#btnSavePolicySearchList'); 
-    
-    
-    btnClear.click(
-        function() {
-            clearPolicySearchList();
-            var list = $('#custom_PolicyHistoryBox').remove();  
-            doSomething();
-        });
-    
-//    btnAdd.click(addSearchItemClicked); 
-    btnSav.click(saveSearchList); 
-    loadPolicyCookie();   
 
-	var tabState = loadCookie(drawerCookieName); 
-    if(tabState === '' || tabState === 'opened'){
-    	getMeat().css('display', 'block'); 
-    } else {
-       	getMeat().css('display', 'none'); 
-    }
-    
-} 
-//}, false);
 
-//doSomething(); 
 
-//waitForKeyElements('.gridItem', doSomething) ; 
-//waitForKeyElements('.gridHeader', doSomething) ; 
 
 doSomething(); 
