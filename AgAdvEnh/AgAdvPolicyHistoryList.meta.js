@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Ag Adv Policy History List  
 // @namespace    http://www.makemea.ninja 
-// @version      1.0
+// @version      1.1
 // @author       Christopher Reeber 
 // @match        http*://localhost/AgAdvantage*
 // @match        http*://localhost/AgriLogic.Web*
@@ -9,6 +9,7 @@
 // @grant        GM_addStyle
 // @grant    	GM_getResourceText
 // @require      http://code.jquery.com/jquery-latest.js
+// @require 	https://raw.githubusercontent.com/dragonalighted/Tamper/master/Common/tools.js
 // @resource  	pnlhtml	https://raw.githubusercontent.com/dragonalighted/Tamper/master/AgAdvEnh/panel.html
 // @resource  	itmhtml  	https://raw.githubusercontent.com/dragonalighted/Tamper/master/AgAdvEnh/history_item.html
 // @resource  	pnlcss	https://raw.githubusercontent.com/dragonalighted/Tamper/master/AgAdvEnh/panel.css
