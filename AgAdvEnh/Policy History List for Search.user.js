@@ -12,6 +12,8 @@
 // @resource  	pnlhtml		https://raw.githubusercontent.com/dragonalighted/Tamper/master/AgAdvEnh/panel.html
 // @resource  	itmhtml  	https://raw.githubusercontent.com/dragonalighted/Tamper/master/AgAdvEnh/history_item.html
 // @resource  	pnlcss		https://raw.githubusercontent.com/dragonalighted/Tamper/master/AgAdvEnh/panel.css
+// @downloadURL https://github.com/dragonalighted/Tamper/raw/master/AgAdvEnh/Policy%20History%20List%20for%20Search.user.js
+// @updateURL   https://github.com/dragonalighted/Tamper/raw/master/AgAdvEnh/Policy%20History%20List%20for%20Search.user.js
 // ==/UserScript==
 
 
