@@ -13,6 +13,8 @@
 // @grant        GM_addStyle
 // @grant    	GM_getResourceText
 // @grant        unsafeWindow
+// @downloadUrl  https://github.com/dragonalighted/Tamper/raw/master/TimeSheetEnh/TimeCalc.user.js
+// @updateUrl	https://github.com/dragonalighted/Tamper/raw/master/TimeSheetEnh/TimeCalc.meta.js
 // ==/UserScript==
 
 var cssTxt  = GM_getResourceText("timeCSS");
