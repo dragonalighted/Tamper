@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Ag Adv Policy History List 
 // @namespace    http://www.makemea.ninja 
-// @version      1.1
+// @version      1.2
 // @author       Christopher Reeber 
 // @match        http*://localhost/AgAdvantage*
 // @match        http*://localhost/AgriLogic.Web*
@@ -16,6 +16,7 @@
 // @downloadURL https://github.com/dragonalighted/Tamper/raw/master/AgAdvEnh/AgAdvPolicyHistoryList.user.js
 // @updateURL   https://github.com/dragonalighted/Tamper/raw/master/AgAdvEnh/AgAdvPolicyHistoryList.meta.js
 // ==/UserScript==
+
 
 
 // Get our resources. 
@@ -67,7 +68,7 @@ function doSomething()
         var pn = $('#custom_txtAddNewPolicy');
         
         if( pn.val().trim() !== '' ) {
-            addSearchItem( new PolicyHistoryItem( pn.val(), ta.val())); 
+            addSearchItem( new PolicyHistoryItem( pn.val().trim(), ta.val().trim())); 
             ta.val(''); 
             pn.val(''); 
             saveSearchList(); 
@@ -161,14 +162,22 @@ function clearPolicySearchList(){
     saveCookie(policyCookieName, jObj);  
 }
 
+function replaceAll( source, target, replacement) {
+	while(source.indexOf(target) >= 0 )
+		source = source.replace(target, replacement); 
+	return source; 
+}
+
 function addSearchItem(p)
 {
     var list = getControl('list');     
     
-    var itemText = itmhtml.replace('PHL_POLICY_NUM', p.policyNum)
-    	.replace('PHL_POLICY_NOTE', p.note)
-    	.replace('PHL_POLICY_TOUCH', p.lastVisit)
-    	.replace('PHL_POLICY_STICK', (Boolean(p.sticky) === true ? 'checked="true"' : ' ') ); 
+    var itemText = itmhtml.toString();
+	itemText = replaceAll( itemText, 'PHL_POLICY_NUM', p.policyNum); 
+	itemText = replaceAll( itemText, 'PHL_POLICY_NOTE', p.note); 
+	itemText = replaceAll( itemText, 'PHL_POLICY_TOUCH', p.lastVisit);
+	itemText = replaceAll( itemText, 'PHL_POLICY_STICK', (Boolean(p.sticky) === true ? 'checked="true"' : ' ') ); 
+
     
     list.append( itemText ); 
     
@@ -180,7 +189,7 @@ function addSearchItem(p)
 
     btnDelPolicy.click(
         function(){            
-            var itemId = '#li_ph_' +  this.id.substring(6); 
+            var itemId = '#li_ph_' +  this.id.substring(7); 
             var li = $(itemId); 
             li.remove(); 
             saveSearchList();
