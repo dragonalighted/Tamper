@@ -35,7 +35,7 @@ function cast(rawObj, constructor, trimStrings)
       for(var prop in rawObj){
     	if(prop in obj) {
         	obj[prop] = rawObj[prop]; 
-		if(typeof(obj[prop]) === 'string' AND obj[prop] !== null ) obj[prop] = obj[prop].trim();
+		if(typeof(obj[prop]) === 'string' && obj[prop] !== null ) obj[prop] = obj[prop].trim();
         }
     }
     return obj; 
