@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Ag Adv Policy History List 
 // @namespace    http://www.makemea.ninja 
-// @version      1.2
+// @version      1.3
 // @author       Christopher Reeber 
 // @match        http*://localhost/AgAdvantage*
 // @match        http*://localhost/AgriLogic.Web*
@@ -114,8 +114,8 @@ function PolicyHistoryItem( policy, note, sticky, date)
 	
    // alert('con:' + sticky);
     
-    this.policyNum = policy; 
-    this.note = note; 
+    this.policyNum = policy.trim(); 
+    this.note = note.trim(); 
     this.sticky = sticky; 
     this.lastVisit =  Date(date); 
 }
@@ -173,8 +173,8 @@ function addSearchItem(p)
     var list = getControl('list');     
     
     var itemText = itmhtml.toString();
-	itemText = replaceAll( itemText, 'PHL_POLICY_NUM', p.policyNum); 
-	itemText = replaceAll( itemText, 'PHL_POLICY_NOTE', p.note); 
+	itemText = replaceAll( itemText, 'PHL_POLICY_NUM', p.policyNum.trim()); 
+	itemText = replaceAll( itemText, 'PHL_POLICY_NOTE', p.note.trim()); 
 	itemText = replaceAll( itemText, 'PHL_POLICY_TOUCH', p.lastVisit);
 	itemText = replaceAll( itemText, 'PHL_POLICY_STICK', (Boolean(p.sticky) === true ? 'checked="true"' : ' ') ); 
 
