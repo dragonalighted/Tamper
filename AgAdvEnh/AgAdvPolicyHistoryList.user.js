@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Ag Adv Policy History List 
 // @namespace    http://www.makemea.ninja 
-// @version      1.3
+// @version      1.4
 // @author       Christopher Reeber 
 // @match        http*://localhost/AgAdvantage*
 // @match        http*://localhost/AgriLogic.Web*
@@ -249,7 +249,7 @@ function loadPolicyCookie()
  
  	var len = policies.length; 
  	for( i = 0; i < len; i++){
- 		policies[i] = cast(policies[i], PolicyHistoryItem); 
+ 		policies[i] = cast(policies[i], PolicyHistoryItem, true); 
     }
  	policies.sort(sortHistory);
  	for( i = 0; i < len; i++) {
