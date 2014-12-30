@@ -28,12 +28,14 @@ function addGlobalStyle(css) {
 }
  
  
-function cast(rawObj, constructor)
+function cast(rawObj, constructor, trimStrings)
 {
+	if( typeof(trimStrings)==='undefined') trimStrings = false; 
 	var obj = new constructor(); 
-    for(var prop in rawObj){
+      for(var prop in rawObj){
     	if(prop in obj) {
         	obj[prop] = rawObj[prop]; 
+		if(typeof(obj[prop]) === 'string' AND obj[prop] !== null ) obj[prop] = obj[prop].trim();
         }
     }
     return obj; 
