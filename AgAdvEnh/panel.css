@@ -46,6 +46,10 @@
 	margin-left:10px;
 }
 
+#custom_PolicyHistoryList{
+	padding: 10px 0 0 0 !important;
+}
+
 .msg_box {
 	display:none !important;
 	text-align:center;
