@@ -8,6 +8,7 @@
 	min-height:100px;
 	background:lightgrey;
 	display:flex !important;
+	box-sizing: content-box !important; 
 }
 
 #custom_PolicyHistoryTab {
@@ -22,6 +23,7 @@
 #custom_PolicyHistoryMeat{
 	display:block;
 	width:450px;
+	box-sizing: content-box !important; 
 }
 
 #custom_PolicyHistoryBox h3 {

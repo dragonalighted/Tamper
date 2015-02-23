@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Ag Adv Policy History List 
 // @namespace    http://www.makemea.ninja 
-// @version      1.6
+// @version      1.7
 // @author       Christopher Reeber 
 // @match        http*://localhost/AgAdvantage*
 // @match        http*://localhost/AgriLogic.Web*
@@ -275,12 +275,12 @@ function toggleDisplay( state)
     var control = getControl('meat'); 
     var cookieData = loadCookie(drawerCookieName); 
 	var duration = 1000 ; 
-	control.stop();
+	//control.finish();
 	var dispStyle = control.css('display');
 	    
     if( cookieData === 'opened' && state === 'close') return cookieData; 
-    else if ( state === 'open') { control.slideDown(500); }
-    else { control.slideUp(500); }
+    else if ( state === 'open') { control.slideDown(); }
+    else { control.slideUp(); }
 	return cookieData; 
 }
 
