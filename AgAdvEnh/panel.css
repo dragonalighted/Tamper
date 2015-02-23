@@ -7,7 +7,7 @@
 	padding:5px;
 	min-height:100px;
 	background:lightgrey;
-	display:flex;
+	display:flex !important;
 }
 
 #custom_PolicyHistoryTab {
@@ -20,16 +20,16 @@
 }
 
 #custom_PolicyHistoryMeat{
-	display:block;
+	display:block !important;
 	width:450px;
 }
 
 #custom_PolicyHistoryBox h3 {
-	display:inline
+	display:inline !important; 
 }
 
 #custom_newPolicyItem {
-	display:inline-flex;
+	display:inline-flex !important;
 }
 
 #custom_txtAddNewPolicy {
@@ -47,7 +47,7 @@
 }
 
 .msg_box {
-	display:none;
+	display:none !important;
 	text-align:center;
 	background-color:green;
 	color:white;
@@ -63,6 +63,6 @@
 
 
 .custom_li_ph {
-	display:inline-flex;
+	display:inline-flex !important;
 } 
 

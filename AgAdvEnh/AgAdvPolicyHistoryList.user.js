@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Ag Adv Policy History List 
 // @namespace    http://www.makemea.ninja 
-// @version      1.4
+// @version      1.5
 // @author       Christopher Reeber 
 // @match        http*://localhost/AgAdvantage*
 // @match        http*://localhost/AgriLogic.Web*
@@ -16,6 +16,7 @@
 // @downloadURL https://github.com/dragonalighted/Tamper/raw/master/AgAdvEnh/AgAdvPolicyHistoryList.user.js
 // @updateURL   https://github.com/dragonalighted/Tamper/raw/master/AgAdvEnh/AgAdvPolicyHistoryList.meta.js
 // ==/UserScript==
+
 
 
 
@@ -39,6 +40,7 @@ function doSomething()
 
     $updatePanel.append(pnlhtml); 
 	
+    panel = getControl('main'); 
 
 
     
@@ -50,6 +52,13 @@ function doSomething()
         getControl('tab').css("border-color", "rgb(101, 134, 153)"); 
     });
     
+	panel.hover( 
+	function() {
+		toggleDisplay('open'); 
+	} , function(){
+		toggleDisplay('close');
+	}); 
+	
     $('#btnTestPolicySearchList').click( function() {
     	writeErr('TEST! TEST! TEST'); 
         writeMsg('TEST! TEST! TEST'); 
@@ -240,6 +249,10 @@ function loadPolicyCookie()
     var policyString = loadCookie(policyCookieName);  
 
  	var policies;
+	if( policyString == "" || policyString == null){
+		saveSearchList(); 
+		policyString = loadCookie(policyCookieName); 
+	}	
  	try { 
  		policies = jQuery.parseJSON(policyString); 
  	}
@@ -257,21 +270,31 @@ function loadPolicyCookie()
     } 
 }
 
+function toggleDisplay( state)
+{
+    var control = getControl('meat'); 
+    var cookieData = loadCookie(drawerCookieName); 
+	var duration = 1000 ; 
+	control.stop();
+	var dispStyle = control.css('display');
+	    
+    if( cookieData === 'opened' && state === 'close') return cookieData; 
+    else if ( state === 'open') { control.slideDown(500); }
+    else { control.slideUp(500); }
+	return cookieData; 
+}
 
 function tabClicked()
 {
-    var meat = getControl('meat'); 
-    var dispStyle = meat.css('display');
-    var cookieData = '';     
-    if(dispStyle === 'none'){
-		cookieData = 'opened' ;
-    } else {
-    	cookieData = 'closed'; 
-    }
-
-    meat.slideToggle(1000);     
-    
+    var cookieData = loadCookie(drawerCookieName); 
+    if( cookieData === 'closed') 
+        cookieData = 'opened'; 
+    else 
+        cookieData = 'closed';     
     saveCookie(drawerCookieName, cookieData);    
+    toggleDisplay( ( cookieData ==='opened' ? 'open': 'close' ) ) ; 
+	
+
 }
 
 
