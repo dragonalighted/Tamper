@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Ag Adv Policy History List 
 // @namespace    http://www.makemea.ninja 
-// @version      1.7
+// @version      1.8
 // @author       Christopher Reeber 
 // @match        http*://localhost/AgAdvantage*
 // @match        http*://localhost/AgriLogic.Web*
@@ -17,6 +17,11 @@
 // @updateURL   https://github.com/dragonalighted/Tamper/raw/master/AgAdvEnh/AgAdvPolicyHistoryList.meta.js
 // ==/UserScript==
 
+
+
+var DRAWER_CLOSE_DURATION = 200 ;
+var DRAWER_OPEN_DURATION = 200 ;
+var DRAWER_PAUSE = 1500; 
 
 
 
@@ -274,13 +279,15 @@ function toggleDisplay( state)
 {
     var control = getControl('meat'); 
     var cookieData = loadCookie(drawerCookieName); 
-	var duration = 1000 ; 
 	//control.finish();
 	var dispStyle = control.css('display');
 	    
     if( cookieData === 'opened' && state === 'close') return cookieData; 
-    else if ( state === 'open') { control.slideDown(); }
-    else { control.slideUp(); }
+    else if ( state === 'open') { 
+        control.stop(true, false); 
+        control.slideDown(DRAWER_OPEN_DURATION); 
+    }
+    else { control.delay(DRAWER_PAUSE).slideUp(DRAWER_CLOSE_DURATION); }
 	return cookieData; 
 }
 

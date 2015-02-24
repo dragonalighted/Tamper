@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Ag Adv Policy History List  
 // @namespace    http://www.makemea.ninja 
-// @version      1.7
+// @version      1.8
 // @author       Christopher Reeber 
 // @match        http*://localhost/AgAdvantage*
 // @match        http*://localhost/AgriLogic.Web*
